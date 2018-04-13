@@ -29,17 +29,10 @@ class ConsumerLoan(object):
         
     def __init__(self):
         self._inputScreen()
-        self.notional_amount = self.dfInput.loc[0, 'Notional Amount']
-        self.term_in_tenor = self.dfInput.loc[0, 'Term in Months']
-        self.annual_percentage_rate = self.dfInput.loc[0, 'APR']
-        self.effective_date = self.dfInput.loc[0, 'Effective Date']
-        self.repayment_day = self.dfInput.loc[0, 'Repayment Day']
-        self.calendar = ql.UnitedKingdom()
-        self.tenor = ql.Period(ql.Monthly)
     
     def _inputScreen(self):
         self.dfInput = pd.DataFrame({'Notional Amount': [100000], 
-                                     'Term in Months': [5], 
+                                     'Term in Months': [24], 
                                      'APR': [0.05], 
                                      'Repayment Day': [10], 
                                      'Effective Date': [datetime.datetime.today()]})
@@ -54,6 +47,15 @@ class ConsumerLoan(object):
         self.input = tab
     
     def setup(self):
+        self.dfInput = self.dfInputQG.get_changed_df()
+        self.notional_amount = self.dfInput.loc[0, 'Notional Amount']
+        self.term_in_tenor = self.dfInput.loc[0, 'Term in Months']
+        self.annual_percentage_rate = self.dfInput.loc[0, 'APR']
+        self.effective_date = self.dfInput.loc[0, 'Effective Date']
+        self.repayment_day = self.dfInput.loc[0, 'Repayment Day']
+        self.calendar = ql.UnitedKingdom()
+        self.tenor = ql.Period(ql.Monthly)
+
         self.effective_date = ql.DateParser.parseFormatted(
             self.effective_date.strftime('%Y-%m-%d'), 
             '%Y-%m-%d')
