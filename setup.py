@@ -28,7 +28,8 @@ setup(
     install_requires=[
         'QuantLib-Python==1.12',
         'pandas==0.22.0',
-        'scipy==1.0.1'
+        'scipy==1.0.1',
+        'qgrid',
     ],
     packages=['quantlibapp'],
     long_description=local_file('README.rst').read(),

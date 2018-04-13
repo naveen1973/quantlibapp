@@ -7,6 +7,8 @@ import numpy as np
 import datetime
 import calendar
 from scipy.optimize import root
+import qgrid
+import ipywidgets as widgets
 
 class ConsumerLoan(object):
     
@@ -25,22 +27,32 @@ class ConsumerLoan(object):
         
     """        
         
-    def __init__(self,
-                 notional_amount,
-                 term_in_tenor,
-                 annual_percentage_rate,
-                 repayment_day,
-                 effective_date = datetime.datetime.now(),
-                 calendar = ql.UnitedKingdom(), 
-                 tenor = ql.Period(ql.Monthly)):
-        self.notional_amount = notional_amount
-        self.term_in_tenor = term_in_tenor
-        self.annual_percentage_rate = annual_percentage_rate
-        self.effective_date = effective_date
-        self.repayment_day = repayment_day
-        self.calendar = calendar
-        self.tenor = tenor
-        
+    def __init__(self):
+        self._inputScreen()
+        self.notional_amount = self.dfInput.loc[0, 'Notional Amount']
+        self.term_in_tenor = self.dfInput.loc[0, 'Term in Months']
+        self.annual_percentage_rate = self.dfInput.loc[0, 'APR']
+        self.effective_date = self.dfInput.loc[0, 'Effective Date']
+        self.repayment_day = self.dfInput.loc[0, 'Repayment Day']
+        self.calendar = ql.UnitedKingdom()
+        self.tenor = ql.Period(ql.Monthly)
+    
+    def _inputScreen(self):
+        self.dfInput = pd.DataFrame({'Notional Amount': [100000], 
+                                     'Term in Months': [5], 
+                                     'APR': [0.05], 
+                                     'Repayment Day': [10], 
+                                     'Effective Date': [datetime.datetime.today()]})
+        self.dfInputQG = qgrid.QgridWidget(df=self.dfInput, 
+                                           show_toolbar=False)
+        tab_content = ['Loan Details']
+        children = [self.dfInputQG]
+        tab = widgets.Tab()
+        tab.children = children
+        for i in range(len(children)):
+            tab.set_title(i, str(tab_content[i]))
+        self.input = tab
+    
     def setup(self):
         self.effective_date = ql.DateParser.parseFormatted(
             self.effective_date.strftime('%Y-%m-%d'), 
@@ -55,7 +67,7 @@ class ConsumerLoan(object):
         if self.first_date < self.effective_date:
             self.first_date = self.first_date + ql.Period(1, ql.Months)
             
-        self.termination_date = self.first_date + ql.Period(self.term_in_tenor, 
+        self.termination_date = self.first_date + ql.Period(int(self.term_in_tenor), 
                                                             ql.Months)
         self.business_convention = ql.Following
         self.termination_business_convention = ql.Following
