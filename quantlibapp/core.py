@@ -30,12 +30,16 @@ class ConsumerLoan(object):
     def __init__(self):
         self._inputScreen()
     
-    def _inputScreen(self):
-        self.dfInput = pd.DataFrame({'Notional Amount': [100000], 
+    def _inputScreen(self, dfInput=None):
+        if dfInput==None:
+            self.dfInput = pd.DataFrame({'Notional Amount': [100000], 
                                      'Term in Months': [24], 
                                      'APR': [0.05], 
                                      'Repayment Day': [10], 
                                      'Effective Date': [datetime.datetime.today()]})
+        else:
+            self.dfInput = dfInput
+        
         self.dfInputQG = qgrid.QgridWidget(df=self.dfInput, 
                                            show_toolbar=False)
         tab_content = ['Loan Details']
@@ -46,7 +50,7 @@ class ConsumerLoan(object):
             tab.set_title(i, str(tab_content[i]))
         self.input = tab
     
-    def setup(self):
+    def _setup(self):
         self.dfInput = self.dfInputQG.get_changed_df()
         self.notional_amount = self.dfInput.loc[0, 'Notional Amount']
         self.term_in_tenor = self.dfInput.loc[0, 'Term in Months']
@@ -116,7 +120,7 @@ class ConsumerLoan(object):
         return df.loc[df.shape[0]-1, 'Balance_End']
     
     def process(self):
-        self.setup()
+        self._setup()
         solv = root(self._solve_annuity,
                     -np.pmt(self.annual_percentage_rate/12,
                             self.term_in_tenor, 
@@ -128,7 +132,3 @@ class ConsumerLoan(object):
         self.output.loc[lastIndex, 'Payment'] = self.output.Payment[lastIndex]  + self.output.Balance_End[lastIndex]
         self.output.loc[lastIndex, 'Principal'] = self.output.Principal[lastIndex]  + self.output.Balance_End[lastIndex]
         self.output.loc[lastIndex, 'Balance_End'] = 0
-
-        
-        
-        
