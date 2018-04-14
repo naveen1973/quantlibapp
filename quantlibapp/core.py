@@ -27,18 +27,25 @@ class ConsumerLoan(object):
         
     """        
         
-    def __init__(self):
+    def __init__(self, 
+                 notional_amount=100000.0, 
+                 term_in_tenor=24, 
+                 annual_percentage_rate=0.05,
+                 effective_date=datetime.datetime.today(),
+                 repayment_day=10):
+        self.notional_amount = notional_amount
+        self.term_in_tenor=term_in_tenor
+        self.annual_percentage_rate = annual_percentage_rate
+        self.effective_date = effective_date
+        self.repayment_day = repayment_day
         self._inputScreen()
     
-    def _inputScreen(self, dfInput=None):
-        if dfInput==None:
-            self.dfInput = pd.DataFrame({'Notional Amount': [100000], 
-                                     'Term in Months': [24], 
-                                     'APR': [0.05], 
-                                     'Repayment Day': [10], 
-                                     'Effective Date': [datetime.datetime.today()]})
-        else:
-            self.dfInput = dfInput
+    def _inputScreen(self):
+        self.dfInput = pd.DataFrame({'Notional Amount': [self.notional_amount],
+                                     'Term in Months': [self.term_in_tenor], 
+                                     'APR': [self.annual_percentage_rate], 
+                                     'Repayment Day': [self.repayment_day], 
+                                     'Effective Date': [self.effective_date]})
         
         self.dfInputQG = qgrid.QgridWidget(df=self.dfInput, 
                                            show_toolbar=False)
@@ -50,7 +57,7 @@ class ConsumerLoan(object):
             tab.set_title(i, str(tab_content[i]))
         self.input = tab
     
-    def _setup(self):
+    def _takeQgridInput(self):
         self.dfInput = self.dfInputQG.get_changed_df()
         self.notional_amount = self.dfInput.loc[0, 'Notional Amount']
         self.term_in_tenor = self.dfInput.loc[0, 'Term in Months']
@@ -59,7 +66,32 @@ class ConsumerLoan(object):
         self.repayment_day = self.dfInput.loc[0, 'Repayment Day']
         self.calendar = ql.UnitedKingdom()
         self.tenor = ql.Period(ql.Monthly)
+    
+    def _checkDataType(self):
+        if not isinstance(self.notional_amount*1.0, float) or not 0 < self.notional_amount:
+            raise ValueError("'notional_amount' must be an float " +
+                             "larger than 0")
+        
+        if not int(self.term_in_tenor)==self.term_in_tenor or not 0 < self.term_in_tenor <= 240:
+            raise ValueError("'term_in_tenor' must be an integer " +
+                             "between 1 and 240")
+        
+        if not isinstance(self.annual_percentage_rate*1.0, float) or not 0 < self.annual_percentage_rate < 1:
+            raise ValueError("'annual_percentage_rate' must be an float " +
+                             "between 0 and 1")
 
+        if not int(self.repayment_day)==self.repayment_day or not 0 < self.repayment_day <= 31:
+            raise ValueError("'repayment_day' must be an integer " +
+                             "between 1 and 31")
+    
+    def _setup(self):
+        ## take qgrid data input
+        self._takeQgridInput()
+        
+        ## check data type
+        self._checkDataType()
+        
+        ## other setup
         self.effective_date = ql.DateParser.parseFormatted(
             self.effective_date.strftime('%Y-%m-%d'), 
             '%Y-%m-%d')
