@@ -1,0 +1,5 @@
+{
+  "tests/test_basic.py::test_str_APRErrorHandling": true,
+  "tests/test_basic.py::test_str_notional_amountErrorHandling": true,
+  "tests/test_basic.py::test_str_termErrorHandling": true
+}

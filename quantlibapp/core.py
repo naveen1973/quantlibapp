@@ -69,20 +69,16 @@ class ConsumerLoan(object):
     
     def _checkDataType(self):
         if not isinstance(self.notional_amount*1.0, float) or not 0 < self.notional_amount:
-            raise ValueError("'notional_amount' must be an float " +
-                             "larger than 0")
+            raise ValueError("'notional_amount' must be an float larger than 0")
         
         if not int(self.term_in_tenor)==self.term_in_tenor or not 0 < self.term_in_tenor <= 240:
-            raise ValueError("'term_in_tenor' must be an integer " +
-                             "between 1 and 240")
+            raise ValueError("'term_in_tenor' must be an integer between 1 and 240")
         
         if not isinstance(self.annual_percentage_rate*1.0, float) or not 0 < self.annual_percentage_rate < 1:
-            raise ValueError("'annual_percentage_rate' must be an float " +
-                             "between 0 and 1")
+            raise ValueError("'annual_percentage_rate' must be an float between 0 and 1")
 
         if not int(self.repayment_day)==self.repayment_day or not 0 < self.repayment_day <= 31:
-            raise ValueError("'repayment_day' must be an integer " +
-                             "between 1 and 31")
+            raise ValueError("'repayment_day' must be an integer between 1 and 31")
     
     def _setup(self):
         ## take qgrid data input

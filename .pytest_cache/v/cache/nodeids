@@ -1,0 +1,15 @@
+[
+  "tests/test_basic.py::test_negative_notional_amountErrorHandling",
+  "tests/test_basic.py::test_float_termErrorHandling",
+  "tests/test_basic.py::test_long_termErrorHandling",
+  "tests/test_basic.py::test_large_APRErrorHandling",
+  "tests/test_basic.py::test_negative_APRErrorHandling",
+  "tests/test_basic.py::test_negative_repayment_dayErrorHandling",
+  "tests/test_basic.py::test_large_repayment_dayErrorHandling",
+  "tests/test_basic.py::test_float_repayment_dayErrorHandling",
+  "tests/test_basic.py::test_sample1",
+  "tests/test_basic.py::test_sample2",
+  "tests/test_basic.py::test_sample3",
+  "tests/test_basic.py::test_sample4",
+  "tests/test_basic.py::test_sample5"
+]
